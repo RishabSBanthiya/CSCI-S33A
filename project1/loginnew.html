@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    The weather app
+{% endblock %}
+
+{% block body %}
+    <h1>REGISTER</h1>
+
+    <form action="{{ url_for('do_admin_login') }}" method="post">
+
+
+
+        <div class="form-group">
+            <input class="form-control" name="Username" placeholder="EMAIL">
+        </div>
+
+		 <div class="form-group">
+            <input class="form-control" name="Password" placeholder="PASSWORD">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Login</button>
+        </div>
+
+    </form>
+
+
+{% endblock %}
