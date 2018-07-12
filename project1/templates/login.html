@@ -6,8 +6,8 @@
 
 {% block body %}
     <h1>REGISTER</h1>
-
-    <form action="{{ url_for('login') }}" method="post">
+    <!--#form for registering user-->
+    <form action="{{ url_for('register') }}" method="post">
 
 
 
@@ -21,6 +21,27 @@
 
         <div class="form-group">
             <button class="btn btn-primary">Register</button>
+        </div>
+
+    </form>
+
+    <!--#form for logging in user-->
+
+ <h1>LOGIN</h1>
+      <form action="{{ url_for('login') }}" method="post">
+
+
+
+        <div class="form-group">
+            <input class="form-control" name="Username" placeholder="EMAIL">
+        </div>
+
+		 <div class="form-group">
+            <input class="form-control" name="Password" placeholder="PllASSWORD">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Login</button>
         </div>
 
     </form>

@@ -9,13 +9,14 @@ db = scoped_session(sessionmaker(bind=engine))
 
 
 def main():
-
+    #opening csv file
     f = open('zips.csv')
 
     reader = csv.reader(f)
-    for Zip, City, State, Latitude,Longitude,Population in reader:
-        db.execute('INSERT INTO \"ZIPCODE\" (Zip, City, State, Lat,Long,Pop) VALUES (:Zip, :City, :State, :Lat, :Long, :Pop)',
-                   {'Zip': Zip, 'City': City, 'State': State , 'Lat': Latitude , 'Long': Longitude , 'Pop': Population })
+    for Zip in reader:
+        db.execute('INSERT INTO CHECKING (Zip) VALUES (:Zip)',
+                   {'Zip': Zip})
+
 
     db.commit()
 

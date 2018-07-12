@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    WEATHER
+{% endblock %}
+
+{% block body %}
+
+
+
+<!--displaying weather details as a list-->
+<ul class="list-group list-group-flush">
+  <li class="list-group-item"><h4> Temprature</h4>{{temp}}</li>
+  <li class="list-group-item"><h4> Unix Time</h4>{{time}}</li>
+  <li class="list-group-item"><h4> Summary</h4>{{summary}}</li>
+   <li class="list-group-item"><h4> Humidity</h4>{{humidity}}%</li>
+    <li class="list-group-item"><h4> Dew</h4>{{dewPoint}}%</li>
+
+</ul>
+    <!--displaying comments as a list-->
+    <ul class="list-group list-group-flush">
+        <h2>Comments:</h2>
+        {% for Comment in Comments %}
+            <li class="list-group-item">{{Comment}}</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('weather') }}" method="POST">
+        <input type="text" name="Comment"  placeholder="Comment now here!">
+        <button class="btn-primary"> CHECK IN</button>
+    </form>
+
+
+
+
+
+{% endblock %}
