@@ -70,7 +70,7 @@ def login():
         password = request.form.get("Password")
         session['user_id'] = username
         session['logged_in'] = True
-        #vaildating user
+        #vaildating used
         valid= db.execute('SELECT Password FROM \"User\"WHERE Username LIKE :username',{"username":username}) .fetchone()
         if valid is None:
            return render_template("error.html")
@@ -122,18 +122,21 @@ def weather():
           #if user hasn't logged in it will redirect to login page
         return render_template('login.html')
     else:
+         if not session.get('checked'):
+           zipcode = request.args.get('zip')
+           session['zipcode']=zipcode
 
-        if request.method=="GET":
-          zipcode = request.args.get('zip')
-          lat= db.execute('SELECT lat FROM \"ZIPCODE\"WHERE zip LIKE :zip',{"zip":zipcode}).fetchone()
-          longitude = db.execute('SELECT long FROM \"ZIPCODE\"WHERE zip LIKE :zip',{"zip":zipcode}).fetchone()
-          query = requests.get("https://api.darksky.net/forecast/481d5ba64549cc9fb76fa705cb31c5cd/{},{}".format(lat[0],longitude[0])).json()
-          temp = query["currently"]["temperature"]
-          time = query["currently"]["time"]
-          summary = query["currently"]["summary"]
-          humidity = query["currently"]["humidity"]
-          dewPoint = query["currently"]["dewPoint"]
-          session['query']=True
+         lat= db.execute('SELECT lat FROM \"ZIPCODE\"WHERE zip LIKE :zip',{"zip":session.get('zipcode')}).fetchone()
+         longitude = db.execute('SELECT long FROM \"ZIPCODE\"WHERE zip LIKE :zip',{"zip":session.get('zipcode')}).fetchone()
+         query = requests.get("https://api.darksky.net/forecast/481d5ba64549cc9fb76fa705cb31c5cd/{},{}".format(lat[0],longitude[0])).json()
+
+         temp = query["currently"]["temperature"]
+         time = query["currently"]["time"]
+         summary = query["currently"]["summary"]
+         humidity = query["currently"]["humidity"]
+         dewPoint = query["currently"]["dewPoint"]
+         session['query']=True
+         session['checked']=True
 
 
 
@@ -162,10 +165,11 @@ def weather():
 
            else:
                #checking if the user has already checked in at that zip
-                if valid[1] == session.get('zipcode'):
+                if session.get('checked')==True:
                  return render_template('checked.html')
 
                 else:
+
                  Comment = request.form.get("Comment")
                  Comments.append(Comment)
                  db.execute('UPDATE \"ZIPCODE\" SET \"check\"=\"check\"+1  WHERE zip=:zip',{"zip":session.get('zipcode')})
@@ -176,7 +180,12 @@ def weather():
 
 
 
+
     return render_template("weatherdetails.html", temp=temp,time=time,summary=summary,Comments=Comments,humidity=humidity,dewPoint=dewPoint)
+
+@app.route("/api")
+def api():
+    return render_template('api.html')
 
 @app.route("/api/<zip>")
 def weather_api(zip):
@@ -187,6 +196,8 @@ def weather_api(zip):
     # query=requests.get( "https://api.darksky.net/forecast/481d5ba64549cc9fb76fa705cb31c5cd/{},{}".format(float(lat[0]),float(longitude[0])))
     query = requests.get("https://api.darksky.net/forecast/481d5ba64549cc9fb76fa705cb31c5cd/{},{}".format(lat[0],longitude[0])).json()
     temp = query["currently"]["temperature"]
+    check= db.execute('SELECT \"check\" FROM \"ZIPCODE\"WHERE zip LIKE :zip',{"zip":zip}).fetchone()
+    check=check[0]
     time = query["currently"]["time"]
     summary = query["currently"]["summary"]
     humidity = query["currently"]["humidity"]
@@ -201,5 +212,6 @@ def weather_api(zip):
             "Time": time,
             "Summary": summary,
             "humiity": humidity,
-            "dewPoint":dewPoint
+            "dewPoint":dewPoint,
+            "Check":check
     })
